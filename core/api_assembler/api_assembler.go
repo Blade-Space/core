@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"gopkg.in/yaml.v2"
 )
@@ -22,8 +23,22 @@ func Init(urls []string) []APIInfo {
 	fmt.Println("Starting downloads repos")
 	var repos []string
 
+	var wg sync.WaitGroup
+	reposChan := make(chan string, len(urls))
+
 	for _, url := range urls {
-		repo := downloadGitRepository(url)
+		wg.Add(1)
+		go func(u string) {
+			defer wg.Done()
+			repo := downloadGitRepository(u)
+			reposChan <- repo
+		}(url)
+	}
+
+	wg.Wait()
+	close(reposChan)
+
+	for repo := range reposChan {
 		repos = append(repos, repo)
 	}
 
