@@ -1,0 +1,9 @@
+name: Working with a file 
+api: wwf
+link: https://github.com/Blade-Space/api-wwf
+version: 0.0.1
+date: 03/03/2023
+type: api
+authors:
+  - Burkenya Egor <https://github.com/nik19ta>
+  - Nikita Khvatov <https://github.com/egorkaBurkenya>
