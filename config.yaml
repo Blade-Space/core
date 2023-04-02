@@ -1,0 +1,5 @@
+name: Server OS
+versin: 0.01
+port: 4000
+repos:
+  - https://github.com/Blade-Space/api-wwf
