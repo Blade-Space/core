@@ -1,3 +1,5 @@
+// Package handlercore provides functions to generate the main application file
+// with the required imports and route configurations for the specified APIs.
 package handlercore
 
 import (
@@ -8,10 +10,26 @@ import (
 	"strings"
 )
 
+// Init generates the main application file with the required imports and
+// route configurations for the specified APIs, and a given server port.
+//
+// Parameters:
+//   - apiNames ([]string): A slice of API names to be included in the application.
+//   - port (string): The port number for the server to listen on.
 func Init(apiNames []string, port string) {
 	createAppGoFile(apiNames, port)
 }
 
+// createAppGoFile generates the main application file with the required imports
+// and route configurations for the specified APIs, and a given server port.
+// The generated file will be saved as "out/app.go".
+//
+// Parameters:
+//   - apiNames ([]string): A slice of API names to be included in the application.
+//   - port (string): The port number for the server to listen on.
+//
+// Returns:
+//   - error: An error that occurred during the file generation or saving, or nil if successful.
 func createAppGoFile(apiNames []string, port string) error {
 	apiImports := make([]string, len(apiNames))
 	apiGroups := make([]string, len(apiNames))
