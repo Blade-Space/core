@@ -1,5 +1,11 @@
 name: Server OS
 versin: 0.01
+
+# Port if server os
 port: 4000
+
+# list of repositories that will be downloaded and included in the project
 repos:
   - https://github.com/Blade-Space/api-wwf
+  - https://github.com/Blade-Space/api-wwd
+  - https://github.com/Blade-Space/api-wwz
