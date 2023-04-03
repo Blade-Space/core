@@ -17,4 +17,5 @@ go run ./cmd/main.go
 go mod tidy
 
 # * Компилирует и запускает server os
+echo "Launching server os 🔥"
 go run out/app.go

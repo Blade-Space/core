@@ -28,19 +28,52 @@ func createAppGoFile(apiNames []string, port string) error {
 import (
 	%s
 
+	"net"
+	"log"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
-	// API (START)
 	%s
-	// API (END)
 
-	r.Run(":%s")
+	internalIP, err := GetLocalIP()
+
+	fmt.Println("Server OS has been successfully launched and is ready to go. 🚀")
+	fmt.Println("Run on http://localhost:%s")
+	if err == nil {
+		fmt.Println("Run on: http://" + internalIP + ":%s")
+	}
+	if err := r.Run(":%s"); err != nil {
+		log.Fatalf(err.Error())
+	}
 }
-`, strings.Join(apiImports, "\n\t"), strings.Join(apiGroups, "\n\t"), port)
+
+func GetLocalIP() (string, error) {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return "", err
+	}
+
+	for _, addr := range addrs {
+		ipNet, ok := addr.(*net.IPNet)
+		if !ok {
+			continue
+		}
+		ip := ipNet.IP
+		if ip.IsLoopback() || ip.IsUnspecified() || ip.To4() == nil {
+			continue
+		}
+
+		return ip.String(), nil
+	}
+
+	return "", fmt.Errorf("внутренний IP-адрес не найден")
+}
+`, strings.Join(apiImports, "\n\t"), strings.Join(apiGroups, "\n\t"), port, port, port)
 
 	outDir := "out"
 	err := os.MkdirAll(outDir, 0755)

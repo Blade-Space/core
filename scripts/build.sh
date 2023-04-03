@@ -6,9 +6,11 @@ rm ./main
 # * Создаёт папку apis 
 mkdir apis
 
+echo "Compilation core os 🔥"
 # * Компиляция main.go
 go build ./cmd/main.go
 
+echo "Launching core os 🔥"
 # * Запусит ядра
 ./main
 
@@ -19,6 +21,10 @@ go build ./cmd/main.go
 # * недостающие записи в go
 go mod tidy
 
+echo ""
+echo "Compilation server os 🔥"
 # * Компилирует и запускает server os
 go build  -o out/app out/app.go
+
+echo "Launching server os 🔥"
 ./out/app

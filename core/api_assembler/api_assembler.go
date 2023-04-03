@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -19,8 +20,46 @@ type APIInfo struct {
 	API     string `yaml:"api"`
 }
 
+type APIYaml struct {
+	Name    string   `yaml:"name"`
+	API     string   `yaml:"api"`
+	Link    string   `yaml:"link"`
+	Version string   `yaml:"version"`
+	Date    string   `yaml:"date"`
+	Type    string   `yaml:"type"`
+	Authors []string `yaml:"authors"`
+}
+
+func FetchAndParseAPIYaml(apiName string) (APIYaml, error) {
+	url := fmt.Sprintf("https://raw.githubusercontent.com/Blade-Space/core/main/packages/%s.yaml", apiName)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return APIYaml{}, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return APIYaml{}, fmt.Errorf("ошибка получения YAML-файла: %s", resp.Status)
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return APIYaml{}, err
+	}
+
+	var apiYaml APIYaml
+	err = yaml.Unmarshal(data, &apiYaml)
+	if err != nil {
+		return APIYaml{}, err
+	}
+
+	return apiYaml, nil
+}
+
 func Init(urls []string) []APIInfo {
-	fmt.Println("Starting downloads repos")
+	fmt.Println("")
+	fmt.Println("Starting downloads repos ⬇️")
 	var repos []string
 
 	var wg sync.WaitGroup
@@ -69,6 +108,15 @@ func readAPIInfoFromRepositories(repoPaths []string) []APIInfo {
 
 	for _, repoPath := range repoPaths {
 		apiInfo, err := readAPIInfo(filepath.Join(repoPath, "api.yml"))
+
+		apiYaml, err := FetchAndParseAPIYaml(apiInfo.API)
+		if err != nil {
+			fmt.Println("Ошибка:", err)
+			os.Remove(repoPath)
+			continue
+		}
+		fmt.Printf("✅ API YAML: %+v (%+v-%+v) \n", apiYaml.Name, apiYaml.API, apiYaml.Version)
+
 		apiContent = append(apiContent, apiInfo)
 
 		os.Remove(filepath.Join(repoPath, "go.mod"))
@@ -79,7 +127,6 @@ func readAPIInfoFromRepositories(repoPaths []string) []APIInfo {
 			log.Printf("Ошибка при чтении файла api.yml из %s: %v", repoPath, err)
 			continue
 		}
-		fmt.Printf("API в %s: %+v\n", repoPath, apiInfo.Name)
 	}
 
 	return apiContent
