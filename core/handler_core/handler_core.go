@@ -50,11 +50,61 @@ import (
 	"log"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"embed"
+	"io/fs"
+	"errors"
+	"io"
+	"net/http"
+	"strings"
 )
+
+//go:embed front-end/dist/*
+var frontend embed.FS
+
+type readerAt struct {
+	io.Reader
+}
+
+func (r *readerAt) ReadAt(p []byte, off int64) (n int, err error) {
+	if off < 0 {
+		return 0, errors.New("readerAt: invalid offset")
+	}
+	n, err = r.Read(p)
+	if err == io.EOF {
+		err = io.ErrUnexpectedEOF
+	}
+	return
+}
 
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
+
+	// Serve static files
+	frontendFS, err := fs.Sub(frontend, "front-end/dist")
+	if err != nil {
+		panic(err)
+	}
+
+	// Custom handler for static files and index.html
+	// Serve index.html for the root path
+	r.GET("/", func(c *gin.Context) {
+		fileServer := http.FileServer(http.FS(frontendFS))
+		fileServer.ServeHTTP(c.Writer, c.Request)
+	})
+
+	// Custom handler for static files
+	r.NoRoute(func(c *gin.Context) {
+		path := c.Request.URL.Path
+		if strings.HasPrefix(path, "/api") {
+			c.Status(http.StatusNotFound)
+			return
+		}
+
+		// Serve static files
+		fileServer := http.FileServer(http.FS(frontendFS))
+		fileServer.ServeHTTP(c.Writer, c.Request)
+	})
 
 	%s
 

@@ -1,6 +1,7 @@
 # * Удаление папки: api, out, ./main
 rm -rf apis/
 rm -rf out
+rm -rf out/front-end
 rm ./main
 
 # * Создаёт папку apis 

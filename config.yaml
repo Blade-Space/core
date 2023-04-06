@@ -9,3 +9,7 @@ repos:
   - https://github.com/Blade-Space/api-wwf
   - https://github.com/Blade-Space/api-wwd
   - https://github.com/Blade-Space/api-wwz
+
+front-end: 
+  include: true
+  repo: https://github.com/Blade-Space/front-end
