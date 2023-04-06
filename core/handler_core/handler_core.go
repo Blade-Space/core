@@ -113,7 +113,7 @@ func main() {
 	fmt.Println("Server OS has been successfully launched and is ready to go. 🚀")
 	fmt.Println("Run on http://localhost:%s")
 	if err == nil {
-		fmt.Println("Run on: http://" + internalIP + ":%s")
+		fmt.Println("Run on http://" + internalIP + ":%s")
 	}
 	if err := r.Run(":%s"); err != nil {
 		log.Fatalf(err.Error())
