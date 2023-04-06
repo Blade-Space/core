@@ -8,19 +8,23 @@ import (
 )
 
 func main() {
-	// * Инициализация Config
+	// * Initialize Config
+	// Read the configuration file that contains the list of repository URLs and the server port.
 	config := filecore.Init()
 
-	// * Инициализация API Assembler
+	// * Initialize API Assembler
+	// Download the repositories from the list of URLs in the configuration, and extract API information.
 	repoNames := assembler.Init(config.Repos)
 
 	var names []string
 
+	// Create a slice of API names to be used in the handler initialization.
 	for _, repo := range repoNames {
 		names = append(names, repo.API)
 	}
 
-	// * Инициализация Handler
+	// * Initialize Handler
+	// Generate the application's main file (app.go) with the necessary imports and route configurations.
 	handler.Init(names, config.Port)
 
 	// * Инициализация Front-end Assembler

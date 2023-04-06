@@ -1,3 +1,5 @@
+// Package filecore provides functions to read repository configuration from
+// a YAML file and return the configuration as a ReposConfig structure.
 package filecore
 
 import (
@@ -7,19 +9,16 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type FrontEnd struct {
-	Include bool   `yaml:"include"`
-	Repo    string `yaml:"repo"`
-}
-
-type ReposConfig struct {
-	Name     string   `yaml:"name"`
-	Versin   string   `yaml:"versin"`
-	Port     string   `yaml:"port"`
-	Repos    []string `yaml:"repos"`
-	FrontEnd FrontEnd `yaml:"front-end"`
-}
-
+// readReposFromFile reads the repository configuration from the given file
+// and returns a ReposConfig structure. If an error occurs during reading or
+// parsing the file, the function returns an error.
+//
+// Parameters:
+//   - filename (string): The name of the file containing the repository configuration.
+//
+// Returns:
+//   - ReposConfig: A structure containing the repository configuration from the file.
+//   - error: An error that occurred during the reading or parsing of the file, or nil if successful.
 func readReposFromFile(filename string) (ReposConfig, error) {
 	var config ReposConfig
 
@@ -36,12 +35,18 @@ func readReposFromFile(filename string) (ReposConfig, error) {
 	return config, nil
 }
 
+// Init reads the repository configuration from a file named "config.yaml" and
+// returns a ReposConfig structure. If an error occurs during the reading or
+// parsing of the file, the function logs a fatal error and the program will exit.
+//
+// Returns:
+//   - ReposConfig: A structure containing the repository configuration from the file.
 func Init() ReposConfig {
 	filename := "config.yaml"
 
 	config, err := readReposFromFile(filename)
 	if err != nil {
-		log.Fatalf("Ошибка при чтении файла %s: %v", filename, err)
+		log.Fatalf("Error reading file %s: %v", filename, err)
 	}
 
 	return config
