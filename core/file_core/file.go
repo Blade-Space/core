@@ -7,11 +7,17 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type FrontEnd struct {
+	Include bool   `yaml:"include"`
+	Repo    string `yaml:"repo"`
+}
+
 type ReposConfig struct {
-	Name   string   `yaml:"name"`
-	Versin string   `yaml:"versin"`
-	Port   string   `yaml:"port"`
-	Repos  []string `yaml:"repos"`
+	Name     string   `yaml:"name"`
+	Versin   string   `yaml:"versin"`
+	Port     string   `yaml:"port"`
+	Repos    []string `yaml:"repos"`
+	FrontEnd FrontEnd `yaml:"front-end"`
 }
 
 func readReposFromFile(filename string) (ReposConfig, error) {
